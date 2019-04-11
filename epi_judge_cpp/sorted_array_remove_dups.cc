@@ -4,8 +4,22 @@
 using std::vector;
 // Returns the number of valid entries after deletion.
 int DeleteDuplicates(vector<int>* A_ptr) {
-  // TODO - you fill in here.
-  return 0;
+  auto& A = *A_ptr;
+
+  int compStart = 0;
+  int compEnd = 0;
+  int replace = 0;
+
+  while (replace < A.size() && compEnd < A.size()) {
+      while (A[compEnd] == A[compStart]) {
+          compEnd++;
+      }
+      A[++replace] = A[compEnd];
+      compStart = compEnd;
+  }
+
+  A = std::vector<int>(A.begin(), A.begin() + replace);
+  return A.size();
 }
 vector<int> DeleteDuplicatesWrapper(TimedExecutor& executor, vector<int> A) {
   int end = executor.Run([&] { return DeleteDuplicates(&A); });
