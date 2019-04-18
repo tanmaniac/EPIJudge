@@ -4,13 +4,36 @@
 using std::string;
 
 string IntToString(int x) {
-  // TODO - you fill in here.
-  return "";
+  if (x == 0) return "0";
+
+  bool negative = x < 0;
+  long val = std::abs(long(x));
+  std::stringstream result;
+  while (val != 0){
+      result << val % 10;
+      val /= 10;
+  }
+  if (negative) {
+      result << "-";
+  }
+  std::string resultStr = result.str();
+  std::reverse(resultStr.begin(), resultStr.end());
+  return resultStr;
 }
+
 int StringToInt(const string& s) {
-  // TODO - you fill in here.
-  return 0;
+  if (s.empty()) return 0;
+  int sign = (s[0] == '-') ? -1 : 1;
+  int idx = (s[0] == '-') ? 1 : 0;
+  int result = 0;
+  for (; idx < s.size(); idx++) {
+      result *= 10;
+      result += s[idx] - '0';
+  }
+
+  return result * sign;
 }
+
 void Wrapper(int x, const string& s) {
   if (IntToString(x) != s) {
     throw TestFailure("Int to string conversion failed");

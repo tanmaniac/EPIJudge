@@ -4,8 +4,22 @@
 using std::string;
 
 void ReverseWords(string* s) {
-  // TODO - you fill in here.
-  return;
+  auto& str = *s;
+  // First pass: reverse the characters in each word
+  int start = 0, finish = 0;
+  while (start < str.size()) {
+      // Find the next non alphanumeric
+      while (std::isalnum(str[finish])) {
+          finish++;
+      }
+
+      std::reverse(str.begin() + start, str.begin() + finish);
+      finish++;
+      start = finish;
+  }
+
+  // Now just reverse the whole sentence
+  std::reverse(str.begin(), str.end());
 }
 string ReverseWordsWrapper(TimedExecutor& executor, string s) {
   string s_copy = s;
