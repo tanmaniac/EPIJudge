@@ -3,8 +3,25 @@
 
 shared_ptr<ListNode<int>> ReverseSublist(shared_ptr<ListNode<int>> L, int start,
                                          int finish) {
-  // TODO - you fill in here.
-  return nullptr;
+  if (L == nullptr) return L;
+
+  // Find the start'th node
+  auto dummy = std::make_shared<ListNode<int>>(0, L);
+  auto oneBehind = dummy;
+  for (int i = 1; i < start; i++) {
+      oneBehind = oneBehind->next;
+  }
+
+  auto startNode = oneBehind->next;
+  // ???
+  for (int i = start; i < finish; i++) {
+      auto startNext = startNode->next;
+      auto oneAheadNext = oneBehind->next;
+      oneBehind->next = startNext;
+      startNode->next = startNext->next;
+      startNext->next = oneAheadNext;
+  }
+  return dummy->next;
 }
 
 int main(int argc, char* argv[]) {

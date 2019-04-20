@@ -6,8 +6,46 @@
 using std::shared_ptr;
 
 shared_ptr<ListNode<int>> HasCycle(const shared_ptr<ListNode<int>>& head) {
-  // TODO - you fill in here.
-  return nullptr;
+  // Find the cycle
+  auto slow = head;
+  auto fast = head;
+  bool foundCycle = false;
+  while (fast != nullptr && fast->next != nullptr) {
+      slow = slow->next;
+      fast = fast->next->next;
+      if (slow == fast) {
+          foundCycle = true;
+          break;
+      }
+  }
+
+  if (!foundCycle) {
+      return nullptr;
+  }
+
+  // Now slow == fast and we're in the cycle, so count the cycle length
+  fast = fast->next;
+  int cycleLength = 1;
+  do {
+      cycleLength++;
+      fast = fast->next;
+  } while (slow != fast);
+
+  // Reset the slow and fast pointers
+  slow = head;
+  fast = head;
+  // Advance the fast pointer until it's cycleLength nodes away
+  for (int i = 0; i < cycleLength; i++) {
+      fast = fast->next;
+  }
+
+  // Start both pointers; the point at which they converge is the start of the cycle
+  while (slow != fast) {
+      slow = slow->next;
+      fast = fast->next;
+  }
+
+  return slow;
 }
 void HasCycleWrapper(TimedExecutor& executor,
                      const shared_ptr<ListNode<int>>& head, int cycle_idx) {
