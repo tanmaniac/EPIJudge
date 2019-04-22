@@ -5,17 +5,34 @@
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
 using std::length_error;
+
 class Queue {
- public:
-  void Enqueue(int x) {
-    // TODO - you fill in here.
-    return;
-  }
-  int Dequeue() {
-    // TODO - you fill in here.
-    return 0;
-  }
+public:
+    void Enqueue(int x) {
+        _enqueue.push(x);
+    }
+
+    int Dequeue() {
+        if (_dequeue.empty() && _enqueue.empty()) {
+            throw std::length_error("u wot m8");
+        }
+        // Only add new values if _dequeue is empty
+        if (_dequeue.empty()) {
+            while (!_enqueue.empty()) {
+                _dequeue.push(_enqueue.top());
+                _enqueue.pop();
+            }
+        }
+
+        int value = _dequeue.top();
+        _dequeue.pop();
+        return value;
+    }
+
+private:
+    std::stack<int> _enqueue, _dequeue;
 };
+
 struct QueueOp {
   enum { kConstruct, kDequeue, kEnqueue } op;
   int argument;

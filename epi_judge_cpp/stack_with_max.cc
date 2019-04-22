@@ -7,21 +7,27 @@ using std::length_error;
 class Stack {
  public:
   bool Empty() const {
-    // TODO - you fill in here.
-    return true;
+    return _maxStack.empty();
   }
   int Max() const {
-    // TODO - you fill in here.
-    return 0;
+    return Empty() ? std::numeric_limits<int>::min() : _maxStack.top().second;
   }
   int Pop() {
-    // TODO - you fill in here.
-    return 0;
+    if (Empty()) {
+        throw std::runtime_error("Pop: Stack is empty!");
+    }
+    auto top = _maxStack.top();
+    _maxStack.pop();
+    return top.first;
   }
   void Push(int x) {
-    // TODO - you fill in here.
-    return;
+    // Get the current max
+    int curMax = Max();
+    _maxStack.push(std::make_pair(x, std::max(curMax, x)));
   }
+
+private:
+    std::stack<std::pair<int, int>> _maxStack;
 };
 struct StackOp {
   std::string op;

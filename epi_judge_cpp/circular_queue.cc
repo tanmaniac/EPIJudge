@@ -1,22 +1,47 @@
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
+
+// This isn't even a circular queue wtf
 class Queue {
- public:
-  Queue(size_t capacity) {}
-  void Enqueue(int x) {
-    // TODO - you fill in here.
-    return;
-  }
-  int Dequeue() {
-    // TODO - you fill in here.
-    return 0;
-  }
-  int Size() const {
-    // TODO - you fill in here.
-    return 0;
-  }
+public:
+    Queue(size_t capacity) : _entries(capacity), _head(0), _tail(0), _count(0) {}
+
+    void Enqueue(int x) {
+        if (_count == _entries.size()) {
+            std::rotate(_entries.begin(), _entries.begin() + _head, _entrie s.end());
+            _head = 0;
+            _tail = _count;
+            _entries.resize(_entries.size() * 2);
+        }
+
+        _entries[_tail] = x;
+        _tail = (_tail + 1) % _entries.size(), ++_count;
+    }
+
+    int Dequeue() {
+        int result = _entries[_head];
+        _head = (_head + 1) % _entries.size();
+        _count--;
+        // Resize
+        if (_count <= float(_entries.size()) / 4) {
+            std::rotate(_entries.begin(), _entries.begin() + _head, _entries.end());
+            _head = 0;
+            _tail = _count;
+            _entries.resize(std::ceil(float(_entries.size()) / 2));
+        }
+        return result;
+    }
+
+    int Size() const {
+        return _count;
+    }
+
+private:
+    std::vector<int> _entries;
+    int _head, _tail, _count;
 };
+
 struct QueueOp {
   enum { kConstruct, kDequeue, kEnqueue, kSize } op;
   int argument;
