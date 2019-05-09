@@ -1,9 +1,20 @@
 #include "binary_tree_node.h"
 #include "test_framework/generic_test.h"
 
-int SumRootToLeaf(const unique_ptr<BinaryTreeNode<int>>& tree) {
-  // TODO - you fill in here.
-  return 0;
+int sumHelper(const std::unique_ptr<BinaryTreeNode<int>> &root, int runningSum) {
+    if (root == nullptr) {
+        return 0;
+    } else if (root->left == nullptr && root->right == nullptr) {
+        return (runningSum << 1) + root->data;
+    }
+
+    runningSum = (runningSum << 1) + root->data;
+    int mySum = sumHelper(root->left, runningSum) + sumHelper(root->right, runningSum);
+    return mySum;
+}
+
+int SumRootToLeaf(const unique_ptr<BinaryTreeNode<int>> &tree) {
+    return sumHelper(tree, 0);
 }
 
 int main(int argc, char* argv[]) {

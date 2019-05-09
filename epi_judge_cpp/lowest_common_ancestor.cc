@@ -5,11 +5,38 @@
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
 using std::unique_ptr;
+
+// too stupid to figure this out I should just give up
+struct LCAResult {
+    int numContained = 0;
+    BinaryTreeNode<int>* lca = nullptr;
+};
+
+LCAResult lcaHelper(BinaryTreeNode<int>* root, BinaryTreeNode<int>* node0, BinaryTreeNode<int>* node1) {
+    if (root == nullptr) {
+        return {0, nullptr};
+    }
+
+    LCAResult left = lcaHelper(root->left.get(), node0, node1);
+    if (left.numContained == 2) {
+        // Already found
+        return left;
+    }
+
+    LCAResult right = lcaHelper(root->right.get(), node0, node1);
+    if (right.numContained == 2) {
+        // Already found and also I want to die
+        return right;
+    }
+
+    int numContained = left.numContained + right.numContained + (root->data == node0->data) + (root->data == node1->data);
+    return {numContained, (numContained == 2) ? root : nullptr};
+}
+
 BinaryTreeNode<int>* LCA(const unique_ptr<BinaryTreeNode<int>>& tree,
                          const unique_ptr<BinaryTreeNode<int>>& node0,
                          const unique_ptr<BinaryTreeNode<int>>& node1) {
-  // TODO - you fill in here.
-  return nullptr;
+  return lcaHelper(tree.get(), node0.get(), node1.get()).lca;
 }
 int LcaWrapper(TimedExecutor& executor,
                const unique_ptr<BinaryTreeNode<int>>& tree, int key0,

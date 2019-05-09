@@ -14,8 +14,29 @@ struct BinaryTreeNode {
 };
 
 void ConstructRightSibling(BinaryTreeNode<int>* tree) {
-  // TODO - you fill in here.
-  return;
+    if (tree == nullptr) return;
+
+    std::queue<BinaryTreeNode<int> *> queue;
+    queue.push(tree);
+
+    while (!queue.empty()) {
+        // Get next node
+        auto *node = queue.front();
+        queue.pop();
+
+        if (node->left != nullptr) {
+            node->left->next = node->right.get();
+        }
+
+        if (node->next != nullptr && node->right != nullptr) {
+            node->right->next = node->next->left.get();
+        }
+
+        if (node->left != nullptr)
+            queue.push(node->left.get());
+        if (node->right != nullptr)
+            queue.push(node->right.get());
+    }
 }
 template <>
 struct SerializationTraits<unique_ptr<BinaryTreeNode<int>>>

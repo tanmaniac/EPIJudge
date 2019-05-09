@@ -4,10 +4,37 @@
 #include "test_framework/test_failure.h"
 #include "test_framework/timed_executor.h"
 
+int height(BinaryTreeNode<int>* node) {
+    int height = 0;
+    while (node->parent != nullptr) {
+        height++;
+        node = node->parent;
+    }
+    return height;
+}
+
 BinaryTreeNode<int>* LCA(const unique_ptr<BinaryTreeNode<int>>& node0,
                          const unique_ptr<BinaryTreeNode<int>>& node1) {
-  // TODO - you fill in here.
-  return nullptr;
+  // Get heights of the two nodes
+  int height0 = height(node0.get());
+  int height1 = height(node1.get());
+
+  auto taller = (height0 > height1) ? node0.get() : node1.get();
+  auto shorter = (height0 > height1) ? node1.get() : node0.get();
+
+  int difference = std::abs(height0 - height1);
+
+  while (difference > 0) {
+      taller = taller->parent;
+      difference--;
+  }
+
+  while (taller != shorter) {
+      taller = taller->parent;
+      shorter = shorter->parent;
+  }
+
+  return taller;
 }
 int LcaWrapper(TimedExecutor& executor,
                const unique_ptr<BinaryTreeNode<int>>& tree, int key0,
