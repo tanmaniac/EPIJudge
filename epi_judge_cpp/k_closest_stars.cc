@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <vector>
+#include <queue>
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_utils.h"
@@ -19,8 +20,22 @@ struct Star {
 vector<Star> FindClosestKStars(vector<Star>::const_iterator stars_begin,
                                const vector<Star>::const_iterator& stars_end,
                                int k) {
-  // TODO - you fill in here.
-  return {};
+    std::priority_queue<Star, std::vector<Star>, std::less<>> maxHeap;
+    while (stars_begin != stars_end) {
+        maxHeap.push(*stars_begin++);
+        if (maxHeap.size() > k) {
+            // Evict the largest value from the heap
+            maxHeap.pop();
+        }
+    }
+
+    // The remaining values in the heap are the k smallest
+    std::vector<Star> closest;
+    while (!maxHeap.empty()) {
+        closest.push_back(maxHeap.top());
+        maxHeap.pop();
+    }
+    return closest;
 }
 template <>
 struct SerializationTraits<Star> : UserSerTraits<Star, double, double, double> {
