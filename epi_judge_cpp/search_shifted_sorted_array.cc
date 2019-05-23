@@ -3,8 +3,20 @@
 using std::vector;
 
 int SearchSmallest(const vector<int>& A) {
-  // TODO - you fill in here.
-  return 0;
+    int lo = 0;
+    int hi = A.size() - 1;
+
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (A[mid] < A[hi]) {
+            // Must reside in the left half, so go left
+            hi = mid;
+        } else {
+            // Must reside in the right half since mid > hi
+            lo = mid + 1;
+        }
+    }
+    return lo;
 }
 
 int main(int argc, char* argv[]) {

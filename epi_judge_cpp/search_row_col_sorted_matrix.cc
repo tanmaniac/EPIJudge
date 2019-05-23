@@ -3,8 +3,27 @@
 using std::vector;
 
 bool MatrixSearch(const vector<vector<int>>& A, int x) {
-  // TODO - you fill in here.
-  return true;
+    if (A.empty()) return false;
+
+    int rows = A.size();
+    int cols = A[0].size();
+
+    int curRow = 0;
+    int curCol = cols - 1;
+
+    while (curRow < rows && curCol >= 0) {
+        int curVal = A[curRow][curCol];
+        if (curVal == x) {
+            return true;
+        } else if (x > curVal) {
+            // It cannot exist in the current row
+            curRow++;
+        } else {
+            // Everything below x in this column is larger than it
+            curCol--;
+        }
+    }
+  return false;
 }
 
 int main(int argc, char* argv[]) {
