@@ -1,24 +1,70 @@
 #include <vector>
+#include <unordered_map>
+#include <list>
+
 #include "test_framework/generic_test.h"
 #include "test_framework/serialization_traits.h"
 #include "test_framework/test_failure.h"
 
 class LruCache {
  public:
-  LruCache(size_t capacity) {}
+    using Map = std::unordered_map<int, std::pair<int, std::list<int>::iterator>>;
+
+    LruCache(size_t capacity) : _capacity(capacity) {}
+
   int Lookup(int isbn) {
-    // TODO - you fill in here.
-    return 0;
+      auto search = _cache.find(isbn);
+      if (search == _cache.end()) {
+          return -1;
+      } else {
+          int price = search->second.first;
+          swapToFront(search);
+          return price;
+      }
   }
+
   void Insert(int isbn, int price) {
-    // TODO - you fill in here.
-    return;
+      // Check if the entry already exists
+      auto search = _cache.find(isbn);
+      if (search == _cache.end()) {
+          if (_cache.size() >= _capacity) {
+              _cache.erase(_recentlyUsed.back());
+              _recentlyUsed.pop_back();
+          }
+
+          // Insert into the LRU queue and the cache map
+          _recentlyUsed.push_front(isbn);
+          _cache.insert({isbn, {price, _recentlyUsed.begin()}});
+      } else {
+          // Already exists, so just update the LRU queue
+          swapToFront(search);
+      }
   }
-  bool Erase(int isbn) {
-    // TODO - you fill in here.
-    return true;
-  }
+
+    bool Erase(int isbn) {
+        auto search = _cache.find(isbn);
+        if (search == _cache.end()) {
+            return false;
+        } else {
+            _recentlyUsed.erase(search->second.second);
+            _cache.erase(search);
+            return true;
+        }
+    }
+
+private:
+    void swapToFront(Map::iterator& iter) {
+        int isbn = iter->first;
+        _recentlyUsed.erase(iter->second.second);
+        _recentlyUsed.push_front(isbn);
+        iter->second.second = _recentlyUsed.begin();
+    }
+
+    size_t _capacity;
+    std::list<int> _recentlyUsed;
+    Map _cache;
 };
+
 struct Op {
   std::string code;
   int arg1;

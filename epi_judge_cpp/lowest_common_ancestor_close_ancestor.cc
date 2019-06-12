@@ -1,4 +1,6 @@
 #include <memory>
+#include <unordered_set>
+
 #include "binary_tree_with_parent_prototype.h"
 #include "test_framework/binary_tree_utils.h"
 #include "test_framework/generic_test.h"
@@ -8,8 +10,36 @@ using std::unique_ptr;
 
 BinaryTreeNode<int>* LCA(const unique_ptr<BinaryTreeNode<int>>& node0,
                          const unique_ptr<BinaryTreeNode<int>>& node1) {
-  // TODO - you fill in here.
-  return nullptr;
+    std::unordered_set<BinaryTreeNode<int> *> visited;
+
+    auto *node0Runner = node0.get();
+    auto *node1Runner = node1.get();
+
+    while (node0Runner != nullptr || node1Runner != nullptr) {
+        if (node0Runner != nullptr) {
+            // See if we've visited this node
+            auto search = visited.find(node0Runner);
+            if (search != visited.end()) {
+                // Already seen this node, so this is the LCA
+                return node0Runner;
+            } else {
+                visited.insert(node0Runner);
+                node0Runner = node0Runner->parent;
+            }
+        }
+
+        if (node1Runner != nullptr) {
+            auto search = visited.find(node1Runner);
+            if (search != visited.end()) {
+                return node1Runner;
+            } else {
+                visited.insert(node1Runner);
+                node1Runner = node1Runner->parent;
+            }
+        }
+    }
+
+    return nullptr;
 }
 int LcaWrapper(TimedExecutor& executor,
                const unique_ptr<BinaryTreeNode<int>>& tree, int key0,
